@@ -207,6 +207,7 @@ bool axis_relative_modes[] = AXIS_RELATIVE_MODES;
 int feedmultiply=100; //100->1 200->2
 int saved_feedmultiply;
 int extrudemultiply=100; //100->1 200->2
+#if EXTRUDERS > 0
 int extruder_multiply[EXTRUDERS] = {100
   #if EXTRUDERS > 1
     , 100
@@ -215,6 +216,7 @@ int extruder_multiply[EXTRUDERS] = {100
     #endif
   #endif
 };
+#endif
 bool volumetric_enabled = false;
 float filament_size[EXTRUDERS] = { DEFAULT_NOMINAL_FILAMENT_DIA
   #if EXTRUDERS > 1
@@ -2091,10 +2093,91 @@ void process_commands()
           pinMode(pin_number, OUTPUT);
           digitalWrite(pin_number, pin_status);
           analogWrite(pin_number, pin_status);
+        }else{
+          SERIAL_PROTOCOLPGM("----Error----\n");
         }
       }
      break;
+    #if defined(LASER_0_PIN) && LASER_0_PIN > -1
+    case 966: //MM976 -Lasers on status via gcode
+        if (code_seen('P'))
+        {
+          int pin_status = code_value();
+          int pin_number = LED_PIN;
+          if (code_seen('L') && pin_status >= 0 && pin_status <= 255)
+            pin_number = code_value();
+          if (pin_number == 0)
+          {
+            pinMode(LASER_0_PIN, OUTPUT);
+            digitalWrite(LASER_0_PIN, pin_status);
+            analogWrite(LASER_0_PIN, pin_status);
+          }
+          #if defined(LASER_1_PIN) && LASER_1_PIN > -1
+          else if(pin_number == 1){
+            pinMode(LASER_1_PIN, OUTPUT);
+            digitalWrite(LASER_1_PIN, pin_status);
+            analogWrite(LASER_1_PIN, pin_status);
+          }
+          #endif
+          #if defined(LASER_2_PIN) && LASER_2_PIN > -1 
+          else if(pin_number == 2){
+            pinMode(LASER_2_PIN, OUTPUT);
+            digitalWrite(LASER_2_PIN, pin_status);
+            analogWrite(LASER_2_PIN, pin_status);
+          }
+          #endif
+          else{
+            SERIAL_PROTOCOLPGM("----Laser Error----\n");
+          }
+            
+        }
+       break;
+     case 967: //M976 -Lasers off status via gcode
+    
+            if (code_seen('L')){
+              int pin_number = code_value();
+              
+              if (pin_number > 0)
+              {
+                pinMode(LASER_0_PIN, OUTPUT);
+                digitalWrite(LASER_0_PIN, 0);
+                analogWrite(LASER_0_PIN, 0);
+              }
+              #if defined(LASER_1_PIN) && LASER_1_PIN > -1
+              else if(pin_number > 1){
+                pinMode(LASER_1_PIN, OUTPUT);
+                digitalWrite(LASER_1_PIN, 0);
+                analogWrite(LASER_1_PIN, 0);
+              }
+              #endif
+              #if defined(LASER_2_PIN) && LASER_2_PIN > -1 
+              else if(pin_number > 2){
+                pinMode(LASER_2_PIN, OUTPUT);
+                digitalWrite(LASER_2_PIN, 0);
+                analogWrite(LASER_2_PIN, 0);
+              }
+              #endif
+              else{
+                SERIAL_PROTOCOLPGM("----Laser Error----\n");
+              }
+            }else{
+              pinMode(LASER_0_PIN, OUTPUT);
+              digitalWrite(LASER_0_PIN, 0);
+              analogWrite(LASER_0_PIN, 0);
+             #if defined(LASER_1_PIN) && LASER_1_PIN > -1
+               pinMode(LASER_1_PIN, OUTPUT);
+               digitalWrite(LASER_1_PIN, 0);
+               analogWrite(LASER_1_PIN, 0);
+             #endif
+             #if defined(LASER_2_PIN) && LASER_2_PIN > -1 
+              pinMode(LASER_2_PIN, OUTPUT);
+              digitalWrite(LASER_2_PIN, 0);
+              analogWrite(LASER_2_PIN, 0);
+             #endif
+            }
+       break;
 
+    #endif
 // M48 Z-Probe repeatability measurement function.
 //
 // Usage:   M48 <n #_samples> <X X_position_for_samples> <Y Y_position_for_samples> <V Verbose_Level> <Engage_probe_for_each_reading> <L legs_of_movement_prior_to_doing_probe>

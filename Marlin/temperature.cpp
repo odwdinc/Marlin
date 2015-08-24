@@ -1251,7 +1251,8 @@ ISR(TIMER0_COMPB_vect)
 #if defined(FILWIDTH_PIN) &&(FILWIDTH_PIN > -1)
   static unsigned long raw_filwidth_value = 0;  //added for filament width sensor
 #endif
-  
+
+#if HEATER_0_PIN > -1 
 #ifndef SLOW_PWM_HEATERS
   /*
    * standard PWM modulation
@@ -1264,7 +1265,9 @@ ISR(TIMER0_COMPB_vect)
       WRITE(HEATER_1_PIN,1);
 #endif
     } else WRITE(HEATER_0_PIN,0);
-    
+ 
+#endif 
+
 #if EXTRUDERS > 1
     soft_pwm_1 = soft_pwm[1];
     if(soft_pwm_1 > 0) WRITE(HEATER_1_PIN,1); else WRITE(HEATER_1_PIN,0);
@@ -1313,6 +1316,9 @@ ISR(TIMER0_COMPB_vect)
 #ifndef MIN_STATE_TIME
 #define MIN_STATE_TIME 16 // MIN_STATE_TIME * 65.5 = time in milliseconds
 #endif
+
+#endif
+/*
   if (slow_pwm_count == 0) {
     // EXTRUDER 0 
     soft_pwm_0 = soft_pwm[0];
@@ -1343,7 +1349,7 @@ ISR(TIMER0_COMPB_vect)
 #endif
       }
     }
-    
+#endif   
 #if EXTRUDERS > 1
     // EXTRUDER 1
     soft_pwm_1 = soft_pwm[1];
@@ -1420,9 +1426,9 @@ ISR(TIMER0_COMPB_vect)
 	WRITE(HEATER_BED_PIN, 0);
       }
     }
-#endif
   } // if (slow_pwm_count == 0)
-  
+ #endif
+ #if HEATER_0_PIN > -1
   // EXTRUDER 0 
   if (soft_pwm_0 < slow_pwm_count) {
     // turn OFF heather only if the minimum time is up 
@@ -1523,9 +1529,9 @@ ISR(TIMER0_COMPB_vect)
       state_timer_heater_b--;
 #endif
   } //if ((pwm_count % 64) == 0) {
-  
+  d
 #endif //ifndef SLOW_PWM_HEATERS
-  
+*/  
   switch(temp_state) {
     case 0: // Prepare TEMP_0
       #if defined(TEMP_0_PIN) && (TEMP_0_PIN > -1)

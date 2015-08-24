@@ -911,6 +911,17 @@
 
 #endif // RAMPS_OLD || RAMPS_13_EFB || RAMPS_13_EEB || RAMPS_13_EFF || 3DRAG
 
+
+#if MB(RAMPS_13_LSR)
+    #define HEATER_1_PIN       -1
+    #define HEATER_0_PIN       -1
+    #define HEATER_BED_PIN     -1
+    #define FAN_PIN            4
+    #define LASER_0_PIN        8
+    #define LASER_1_PIN        9
+    #define LASER_2_PIN        10
+#endif
+
 /****************************************************************************************
 * Duemilanove w/ ATMega328P pin assignment
 *
