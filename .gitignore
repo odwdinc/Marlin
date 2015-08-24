@@ -6,3 +6,5 @@ applet/
 *.bak
 *.DS_Store
 *.idea
+Marlin/Configuration.h
+Marlin/Configuration_adv.h
